@@ -1,0 +1,28 @@
+name: Announce calls
+on:
+  schedule:
+    # 8th to the 14th of each month at 9am.
+    - cron: '0 9 8-14 * *'
+    # Thusdays at 7am.
+    - cron: '0 7 * * 4'
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure Git.
+        run: |
+          git config --global user.name 'farmOS'
+          git config --global user.email 'noreply@farmOS.org'
+      # We use `date +\%u` below in combination with the schedule cron rules
+      # above to ensure these only run on the days they are meant to. 
+      - name: Announce calls
+        run: |
+          TZ=UTC
+          DAY=$(date +\%u)
+          case "${DAY}" in
+              3)    git commit --allow-empty -m 'The #farmOS monthly community call is today at 2pm Eastern. All are welcome! https://farmos.org/community/monthly-call/' ;;
+              4)    git commit --allow-empty -m 'The #farmOS weekly dev call is today at 12pm Eastern. All are welcome! https://meet.jit.si/farmos-dev' ;;
+          esac
+          git push origin main
