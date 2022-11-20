@@ -5,23 +5,25 @@ on:
     - cron: '0 9 8-14 * *'
 
 jobs:
-  announce:
+  build-message:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ssh-key: ${{ secrets.MICROBLOG_DEPLOY_KEY }}
-      - name: Configure Git.
-        run: |
-          git config --global user.name 'farmOS'
-          git config --global user.email 'noreply@farmOS.org'
       # We use `date +\%u` below in combination with the schedule cron rules
       # above to ensure these only run on the days they are meant to. 
-      - name: Announce calls
+      - name: Build message
         run: |
           TZ=UTC
           DAY=$(date +\%u)
           case "${DAY}" in
-              3)    git commit --allow-empty -m 'The #farmOS monthly community call is today at 2pm Eastern. All are welcome! https://farmos.org/community/monthly-call/' ;;
+              3)    echo "MESSAGE=The #farmOS monthly community call is today at 2pm Eastern. All are welcome! https://farmos.org/community/monthly-call/" >> $GITHUB_ENV ;;
           esac
-          git push origin main
+    outputs:
+      message: ${{ env.MESSAGE }}
+  announce-call:
+    uses: ./.github/workflows/create-message.yml
+    needs:
+      - build-message
+    if: ${{ needs.build-message.outputs.message }}
+    with:
+      message: ${{ needs.build-message.outputs.message }}
+    secrets: inherit 

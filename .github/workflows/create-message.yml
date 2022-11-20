@@ -1,0 +1,35 @@
+name: Create message
+on:
+  workflow_call:
+    inputs:
+      message:
+        type: string
+        required: true
+    secrets:
+      MICROBLOG_DEPLOY_KEY:
+        required: true
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Message to announce'
+        type: string
+        required: true
+
+jobs:
+  create-message:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # Hard-code the repository. This is needed when this workflow is
+          # triggered using workflow_call from other repositories.
+          repository: farmOS/farmOS-microblog
+          ssh-key: ${{ secrets.MICROBLOG_DEPLOY_KEY }}
+      - name: Configure Git.
+        run: |
+          git config --global user.name 'farmOS'
+          git config --global user.email 'noreply@farmOS.org'
+      - name: Commit/push to farmOS-microblog.
+        run: |
+          git commit --allow-empty --cleanup=whitespace -m '${{ inputs.message }}'
+          git push origin main
