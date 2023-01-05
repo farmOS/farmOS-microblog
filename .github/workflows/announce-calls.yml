@@ -3,8 +3,6 @@ on:
   schedule:
     # 8th to the 14th of each month at 9am.
     - cron: '0 9 8-14 * *'
-    # Thusdays at 7am.
-    - cron: '0 7 * * 4'
 
 jobs:
   announce:
@@ -25,6 +23,5 @@ jobs:
           DAY=$(date +\%u)
           case "${DAY}" in
               3)    git commit --allow-empty -m 'The #farmOS monthly community call is today at 2pm Eastern. All are welcome! https://farmos.org/community/monthly-call/' ;;
-              4)    git commit --allow-empty -m 'The #farmOS weekly dev call is today at 12pm Eastern. All are welcome! https://meet.jit.si/farmos-dev' ;;
           esac
           git push origin main
