@@ -31,5 +31,7 @@ jobs:
           git config --global user.email 'noreply@farmOS.org'
       - name: Commit/push to farmOS-microblog.
         run: |
-          git commit --allow-empty --cleanup=whitespace -m '${{ inputs.message }}'
+          git commit --allow-empty --cleanup=whitespace -F- << MESSAGE
+          ${{ inputs.message }}
+          MESSAGE
           git push origin main
