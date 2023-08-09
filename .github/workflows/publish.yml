@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Mastodon
+        if: github.repository == 'farmOS/farmOS-microblog'
         uses: cbrgm/mastodon-github-action@6cffb7d449201bf36a60589de7a76e18ee226043
         with:
           message: ${{ github.event.head_commit.message }}
