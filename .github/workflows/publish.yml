@@ -8,8 +8,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo message
-        run: echo ${{ github.event.head_commit.message }}
+      - name: Show message
+        run: |
+          cat <<MSG
+          ${{ github.event.head_commit.message }}
+          MSG
       - name: Mastodon
         if: github.repository == 'farmOS/farmOS-microblog'
         uses: cbrgm/mastodon-github-action@6cffb7d449201bf36a60589de7a76e18ee226043
